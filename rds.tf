@@ -23,7 +23,7 @@ resource "aws_db_instance" "default" {
   # master_user_secret_kms_key_id = data.aws_kms_alias.rds_default.id   If not specified, the default KMS key for your Amazon Web Services account is used.
   multi_az             = false
 
-  publicly_accessible = false
+  publicly_accessible = false #te
 
   allocated_storage    = 20
   storage_type         = "gp2"
