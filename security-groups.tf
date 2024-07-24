@@ -40,15 +40,6 @@ resource "aws_vpc_security_group_egress_rule" "allow_all_traffic_bastion_ipv4" {
   ip_protocol       = "-1" # semantically equivalent to all ports
 }
 
-resource "aws_security_group" "security_group_app_server" {
-  name        = "${var.project_name}-${var.environment}-sg-appserver"
-  description = "App server security group that allows 80,443 from ALB"
-  vpc_id      = aws_vpc.vpc.id
-  tags = {
-    Name = "${var.project_name}-${var.environment}-sg-appserver"
-  }
-}
-
 resource "aws_security_group" "security_group_db_server" {
   name        = "${var.project_name}-${var.environment}-sg-dbserver"
   description = "App server security group that allows 3306 from App server"
