@@ -40,6 +40,7 @@ resource "aws_instance" "app-resource" {
                 mv /var/www/html/wordpress/* /var/www/html/
                 cd /var/www/html/ && chown www-data:www-data *
                 systemctl reload apache2
+                mv /var/www/html/index.html /home/ubuntu/
                 cd /home/ubuntu/ && curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
                 apt install unzip
                 unzip awscliv2.zip
