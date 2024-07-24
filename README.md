@@ -8,7 +8,7 @@ The EC2 instance is in the public subnet and will pre-install awscli, Apache and
 
 The RDS is not Multi-AZ (as of now), the 2nd private subnet is only launched because DB-Subnet-Group doesnt work with only 1 subnet. We have configured the RDS to only using us-east-1a for now (1st private subnet). The 2nd private subnet also isnt attached to the NAT gateway.
 
-The RDS uses the default KMS key (for RDS) to generate the password and store in the Secrets Manager. You can also create your own key by going to AWS consolde > KMS. Then you can reference that key in the terraform configuration as shown in the first 3 lines of file "rds.tf" and then also uncomment the "master_user_secret_kms_key_id" argument.
+The RDS uses the default KMS key (for RDS) to generate the password and store in the Secrets Manager. You can also create your own key by going to AWS console > KMS. Then you can reference that key in the terraform configuration as shown in the first 3 lines of file "rds.tf" and then also uncomment the "master_user_secret_kms_key_id" argument.
 
 After running "terraform apply", SSH into the EC2 instance, run `aws configure` and configure it. Then rename wp-config-sample.php to wp-config.php, configure the database details, then go to the address and install Wordpress. Thats all.
 
