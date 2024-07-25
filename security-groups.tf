@@ -1,14 +1,14 @@
-resource "aws_security_group" "security_group_bastion_host" {
-  name        = "${var.project_name}-${var.environment}-sg-bastion"
-  description = "Bastion host security group that allows 22 from specific IP"
+resource "aws_security_group" "security_group_app_server" {
+  name        = "${var.project_name}-${var.environment}-sg-app_server"
+  description = "App server host security group"
   vpc_id      = aws_vpc.vpc.id
   tags = {
-    Name = "${var.project_name}-${var.environment}-sg-bastion"
+    Name = "${var.project_name}-${var.environment}-sg-app_server"
   }
 }
 
-resource "aws_vpc_security_group_ingress_rule" "ingress_allow_bastion_22" {
-  security_group_id = aws_security_group.security_group_bastion_host.id
+resource "aws_vpc_security_group_ingress_rule" "ingress_allow_app_server_22" {
+  security_group_id = aws_security_group.security_group_app_server.id
 
   cidr_ipv4   = "0.0.0.0/0"
   from_port   = 22
@@ -16,8 +16,8 @@ resource "aws_vpc_security_group_ingress_rule" "ingress_allow_bastion_22" {
   to_port     = 22
 }
 
-resource "aws_vpc_security_group_ingress_rule" "ingress_allow_bastion_80" {
-  security_group_id = aws_security_group.security_group_bastion_host.id
+resource "aws_vpc_security_group_ingress_rule" "ingress_allow_app_server_80" {
+  security_group_id = aws_security_group.security_group_app_server.id
 
   cidr_ipv4   = "0.0.0.0/0"
   from_port   = 80
@@ -25,8 +25,8 @@ resource "aws_vpc_security_group_ingress_rule" "ingress_allow_bastion_80" {
   to_port     = 80
 }
 
-resource "aws_vpc_security_group_ingress_rule" "ingress_allow_bastion_443" {
-  security_group_id = aws_security_group.security_group_bastion_host.id
+resource "aws_vpc_security_group_ingress_rule" "ingress_allow_app_server_443" {
+  security_group_id = aws_security_group.security_group_app_server.id
 
   cidr_ipv4   = "0.0.0.0/0"
   from_port   = 443
@@ -34,8 +34,8 @@ resource "aws_vpc_security_group_ingress_rule" "ingress_allow_bastion_443" {
   to_port     = 443
 }
 
-resource "aws_vpc_security_group_egress_rule" "allow_all_traffic_bastion_ipv4" {
-  security_group_id = aws_security_group.security_group_bastion_host.id
+resource "aws_vpc_security_group_egress_rule" "allow_all_traffic_app_server_ipv4" {
+  security_group_id = aws_security_group.security_group_app_server.id
   cidr_ipv4         = "0.0.0.0/0"
   ip_protocol       = "-1" # semantically equivalent to all ports
 }
@@ -49,10 +49,10 @@ resource "aws_security_group" "security_group_db_server" {
   }
 }
 
-resource "aws_vpc_security_group_ingress_rule" "ingress_allow_db_3306_from_bastion" {
+resource "aws_vpc_security_group_ingress_rule" "ingress_allow_db_3306_from_app_server" {
   security_group_id = aws_security_group.security_group_db_server.id
 
-  referenced_security_group_id = aws_security_group.security_group_bastion_host.id
+  referenced_security_group_id = aws_security_group.security_group_app_server.id
   from_port   = 3306
   ip_protocol = "tcp"
   to_port     = 3306
@@ -60,6 +60,39 @@ resource "aws_vpc_security_group_ingress_rule" "ingress_allow_db_3306_from_basti
 
 resource "aws_vpc_security_group_egress_rule" "allow_all_traffic_db_ipv4" {
   security_group_id = aws_security_group.security_group_db_server.id
+  cidr_ipv4         = "0.0.0.0/0"
+  ip_protocol       = "-1" # semantically equivalent to all ports
+}
+
+resource "aws_security_group" "security_group_alb" {
+  name        = "${var.project_name}-${var.environment}-sg-alb"
+  description = "Loadbalancer host security group"
+  vpc_id      = aws_vpc.vpc.id
+  tags = {
+    Name = "${var.project_name}-${var.environment}-sg-alb"
+  }
+}
+
+resource "aws_vpc_security_group_ingress_rule" "ingress_allow_alb_80" {
+  security_group_id = aws_security_group.security_group_alb.id
+
+  cidr_ipv4   = "0.0.0.0/0"
+  from_port   = 80
+  ip_protocol = "tcp"
+  to_port     = 80
+}
+
+resource "aws_vpc_security_group_ingress_rule" "ingress_allow_alb_443" {
+  security_group_id = aws_security_group.security_group_alb.id
+
+  cidr_ipv4   = "0.0.0.0/0"
+  from_port   = 443
+  ip_protocol = "tcp"
+  to_port     = 443
+}
+
+resource "aws_vpc_security_group_egress_rule" "allow_all_traffic_alb_ipv4" {
+  security_group_id = aws_security_group.security_group_alb.id
   cidr_ipv4         = "0.0.0.0/0"
   ip_protocol       = "-1" # semantically equivalent to all ports
 }
