@@ -18,16 +18,7 @@ resource "aws_launch_template" "launch_template" {
     }
   }
 
-  user_data = <<-EOF
-                #!/bin/bash
-                apt update
-                apt install apache2 -y
-                apt install php -y
-                apt install php-mbstring -y
-                apt install php-mysql -y
-                apt install php-zip -y
-                apt install ghostscript libapache2-mod-php php-bcmath php-curlphp-imagick php-intl php-json php-xml -y
-              EOF
+  user_data = filebase64("ec2-user-data.sh")
 }
 
 #creating autoscaling group
@@ -42,6 +33,7 @@ resource "aws_autoscaling_group" "as_group" {
 
   vpc_zone_identifier = [aws_subnet.public_subnet_az1.id]
 
+  #attaching app loadbalancer to autoscaling group
   target_group_arns = [aws_lb_target_group.target_group.arn]
   
   health_check_grace_period = "600"
