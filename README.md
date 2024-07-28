@@ -2,11 +2,15 @@
 
 ## Overview
 
-The terraform configuration launches a new VPC, a public subnet, 2 private subnets, internet gateway, nat gateway, route tables, security groups, ec2, rds (mariadb).
+To use the configuration, edit providers.tf and remove the "profile" setting, also use the correct key name in the "launch template".
+
+The terraform configuration launches a new VPC, a public subnet, 2 private subnets, internet gateway, nat gateway, route tables, security groups, ec2, rds (mariadb), autoscaling group, loadbalancer, launch template, target group.
 
 The EC2 instance is in the public subnet and will pre-install awscli, Apache and PHP using the User-data passed in. It will also download wordpress.
 
-The RDS is not Multi-AZ (as of now), the 2nd private subnet is only launched because DB-Subnet-Group doesnt work with only 1 subnet. We have configured the RDS to only using us-east-1a for now (1st private subnet). The 2nd private subnet also isnt attached to the NAT gateway.
+The RDS is not Multi-AZ (as of now), the 2nd private subnet is only launched because DB-Subnet-Group doesnt work with only 1 subnet. We have configured the RDS to only using us-east-1a for now (1st private subnet). The 2nd private subnet also isnt attached to the NAT gateway. Also, loadbalancer requires subnets in multiple AZ and not only in 1 AZ, so we need a subnet in another AZ as well, so the 2nd AZ will also be used when creating LB.
+
+The autoscaling group launches ec2 instances in the public subnet.
 
 The RDS uses the default KMS key (for RDS) to generate the password and store in the Secrets Manager. You can also create your own key by going to AWS console > KMS. Then you can reference that key in the terraform configuration as shown in the first 3 lines of file "rds.tf" and then also uncomment the "master_user_secret_kms_key_id" argument.
 
