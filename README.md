@@ -1,4 +1,4 @@
-# 2-tier-web-app-terraform
+# terraform-aws-2tier-webapp
 
 ## Overview
 
